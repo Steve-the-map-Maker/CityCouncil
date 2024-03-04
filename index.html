@@ -2,12 +2,17 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Custom GeoJSON Map</title>
+    <title>Portland City Council Race: 2022</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link
       href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css"
+    />
+
     <style>
       body {
         margin: 0;
@@ -19,12 +24,120 @@
         bottom: 0;
         width: 100%;
       }
+      .filter-widget {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 1;
+        background-color: #fff; /* Light background for the widget */
+        border-radius: 5px; /* Rounded corners */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+        padding: 10px;
+        display: inline-block;
+      }
+      .filter-widget h4 {
+        margin-top: 0;
+        color: #333; /* Dark color for the title */
+        text-align: center;
+        margin-bottom: 10px; /* Space between title and buttons */
+      }
+      .filter-controls {
+        display: flex;
+        flex-direction: column;
+      }
+      .filter-controls button {
+        margin-bottom: 4px;
+      }
+      .filter-controls button:last-child {
+        margin-bottom: 0;
+      }
+      .filterSize {
+        position: absolute;
+        top: 250px; /* Adjust based on the desired vertical position */
+        right: 110px; /* Middle of the right side */
+        transform: translateX(
+          50%
+        ); /* Center it horizontally relative to its position */
+        z-index: 1;
+        background-color: #fff; /* Light background for the widget */
+        border-radius: 5px; /* Rounded corners */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+        padding: 10px;
+        display: inline-block;
+      }
     </style>
   </head>
   <body>
+    <div class="filter-widget">
+      <h4>Percent Won</h4>
+      <div class="filter-controls">
+        <button
+          class="btn btn-success"
+          onclick="filterByPercentRange(0.0, 0.2)"
+        >
+          0% - 20%
+        </button>
+        <button
+          class="btn btn-success"
+          onclick="filterByPercentRange(0.2, 0.4)"
+        >
+          20% - 40%
+        </button>
+        <button
+          class="btn btn-success"
+          onclick="filterByPercentRange(0.4, 0.6)"
+        >
+          40% - 60%
+        </button>
+        <button
+          class="btn btn-success"
+          onclick="filterByPercentRange(0.6, 0.8)"
+        >
+          60% - 80%
+        </button>
+        <button
+          class="btn btn-success"
+          onclick="filterByPercentRange(0.8, 1.0)"
+        >
+          80% - 100%
+        </button>
+        <button
+          class="btn btn-secondary"
+          onclick="filterByPercentRange(0.0, 1.0)"
+        >
+          Reset Filter
+        </button>
+      </div>
+    </div>
+
+    <div class="filterSize">
+      <h4>Precinct Size by Votes</h4>
+      <div class="filter-controls">
+        <button class="btn btn-success" onclick="filterByVoteRange(0, 2316)">
+          0, 2316
+        </button>
+        <button class="btn btn-success" onclick="filterByVoteRange(2317, 3888)">
+          2317, 3888
+        </button>
+        <button class="btn btn-success" onclick="filterByVoteRange(3889, 5512)">
+          3889, 5512
+        </button>
+        <button
+          class="btn btn-success"
+          onclick="filterByVoteRange(5513, Infinity)"
+        >
+          5513 +
+        </button>
+        <button class="btn btn-secondary" onclick="resetFilters()">
+          Reset Filter
+        </button>
+      </div>
+    </div>
+
     <div id="map"></div>
+
     <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
     <script src="map.js"></script>
-    <!-- Link to your external JS file -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

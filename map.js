@@ -82,22 +82,53 @@ function updateColors() {
     source.setData(data);
   }
 }
+
+function filterByPercentRange(minPercent, maxPercent) {
+  map.setFilter("precinct-fill", [
+    "all",
+    [">=", ["get", "RG_Percent"], minPercent],
+    ["<=", ["get", "RG_Percent"], maxPercent],
+  ]);
+}
+
+function filterByVoteRange(minVotes, maxVotes) {
+  map.setFilter("precinct-fill", [
+    "all",
+    [">=", ["get", "Total Votes"], minVotes],
+    ["<=", ["get", "Total Votes"], maxVotes],
+  ]);
+}
+
+function resetFilters() {
+  // This resets the filter to show all precincts by applying a filter that always returns true.
+  map.setFilter("precinct-fill", null);
+}
+
 // Add click event listener to the map
 map.on("click", "precinct-fill", function (e) {
-  // Ensure that if the map is clicked on more than one feature, only one will be used
   if (e.features.length > 0) {
-    var feature = e.features[0]; // Get the first feature from the array of clicked features
+    var feature = e.features[0];
+    var precinct = feature.properties.Precinct;
+    var rg_percent = feature.properties.RG_Percent;
+    var totalVotes = feature.properties["Total Votes"]; // Assuming the property name is "Total Votes"
+    var rgVotes = feature.properties["RG_Votes"]; // Assuming the property name is "RG_Votes"
 
-    // Create HTML content for the pop-up
-    var popupContent =
-      `<h3>Precinct: ${feature.properties.Precinct}</h3>` +
-      `<p>RG_Percent: ${feature.properties.RG_Percent}</p>`;
+    // Updated popupContent with requested information
+    var popupContent = `
+    <div class="card border-light mb-3" style="max-width: 18rem;">
+        <div class="card-header bg-transparent border-success"><strong>${precinct} Precinct</strong></div>
+        <div class="card-body text-success">
+            <h3 class="card-title">Rene Votes: ${Math.round(
+              rg_percent * 100
+            )}%</h3>
 
-    // Create a pop-up and set its content and location
-    new maplibregl.Popup()
-      .setLngLat(e.lngLat) // Set the popup at the location of the click
-      .setHTML(popupContent) // Set the HTML content defined above
-      .addTo(map); // Add the popup to the map
+            <p class="card-text">RG Votes: ${rgVotes}</p>
+            <p class="card-text">Total Votes: ${totalVotes}</p>
+        </div>
+    </div>
+    `;
+
+    new maplibregl.Popup().setLngLat(e.lngLat).setHTML(popupContent).addTo(map);
   }
 });
 
